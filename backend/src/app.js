@@ -2,6 +2,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const nodemon = require('nodemon')
 const {graphqlHTTP} = require('express-graphql');
 const schema = require('./graphql/schemas');
 
@@ -15,16 +16,19 @@ app.set('port', port);
 //middleware
 app.use(logger);
 app.use(corsinstance);
+app.use(nodemon);
 
 app.use('/graphql', graphqlHTTP({
     schema: schema,
     graphiql: true
 }));
 
-app.use('/', (req, res) => {
-    res.send('Hello World!');
-});
+//routers
+const indexRouter = require('./routes/index')
+const tasksRouter = require('./routes/tasks')
 
+app.use('/', indexRouter);
+app.use('/tasks', tasksRouter);
 
 //module.exports allows you to export a variable or function
 module.exports = app;
